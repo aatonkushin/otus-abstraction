@@ -27,7 +27,7 @@ public class AppTest {
      * движение меняет положение объекта на (5, 8)
      */
     @Test
-    void testPositive() {
+    void testPositiveMove() {
         UObject uObjectMock = getMock();
 
         uObjectMock.setProperty("position", new Vector(12, 5));
@@ -96,5 +96,89 @@ public class AppTest {
                 move::execute
         );
         Assertions.assertTrue(thrown.getMessage().contains("Невозможно переместить объект с нулевой скоростью"));
+    }
+
+    @Test
+    void testPositiveRotate() {
+        UObject uObjectMock = getMock();
+
+        uObjectMock.setProperty("directionsNumber", 8);
+        uObjectMock.setProperty("direction", 1);
+        uObjectMock.setProperty("angularVelocity", 12);
+
+        RotateAdapter adapter = new RotateAdapter(uObjectMock);
+        Rotate rotate = new Rotate(adapter);
+        rotate.execute();
+
+        Assertions.assertEquals(5, uObjectMock.getProperty("direction"));
+    }
+
+    @Test
+    void testNoDirectionsNumber() {
+        UObject uObjectMock = getMock();
+
+        uObjectMock.setProperty("direction", 1);
+        uObjectMock.setProperty("angularVelocity", 12);
+
+        RotateAdapter adapter = new RotateAdapter(uObjectMock);
+        Rotate rotate = new Rotate(adapter);
+
+        RuntimeException thrown = Assertions.assertThrows(
+                RuntimeException.class,
+                rotate::execute
+        );
+        Assertions.assertTrue(thrown.getMessage().contains("directionsNumber"));
+    }
+
+    @Test
+    void testNoDirection() {
+        UObject uObjectMock = getMock();
+
+        uObjectMock.setProperty("directionsNumber", 8);
+        uObjectMock.setProperty("angularVelocity", 12);
+
+        RotateAdapter adapter = new RotateAdapter(uObjectMock);
+        Rotate rotate = new Rotate(adapter);
+
+        RuntimeException thrown = Assertions.assertThrows(
+                RuntimeException.class,
+                rotate::execute
+        );
+        Assertions.assertTrue(thrown.getMessage().contains("direction"));
+    }
+
+    @Test
+    void testNoAngularVelocity() {
+        UObject uObjectMock = getMock();
+
+        uObjectMock.setProperty("directionsNumber", 8);
+        uObjectMock.setProperty("direction", 1);
+
+        RotateAdapter adapter = new RotateAdapter(uObjectMock);
+        Rotate rotate = new Rotate(adapter);
+
+        RuntimeException thrown = Assertions.assertThrows(
+                RuntimeException.class,
+                rotate::execute
+        );
+        Assertions.assertTrue(thrown.getMessage().contains("angularVelocity"));
+    }
+
+    @Test
+    void testRotationStopped(){
+        UObject uObjectMock = getMock();
+
+        uObjectMock.setProperty("directionsNumber", 8);
+        uObjectMock.setProperty("direction", 1);
+        uObjectMock.setProperty("angularVelocity", 0);
+
+        RotateAdapter adapter = new RotateAdapter(uObjectMock);
+        Rotate rotate = new Rotate(adapter);
+
+        RuntimeException thrown = Assertions.assertThrows(
+                RuntimeException.class,
+                rotate::execute
+        );
+        Assertions.assertTrue(thrown.getMessage().contains("Невозможно повернуть объект с нулевой скоростью"));
     }
 }
