@@ -11,6 +11,10 @@ public class Move {
     }
 
     public void execute() {
+        if (m.getVelocity().getX() == 0 && m.getVelocity().getY() == 0) {
+            throw new RuntimeException("Невозможно переместить объект с нулевой скоростью");
+        }
+
         m.setPosition(Vector.plus(m.getPosition(), m.getVelocity()));
     }
 }
